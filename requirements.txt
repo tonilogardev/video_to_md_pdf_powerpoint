@@ -1,0 +1,21 @@
+# Video Processing & Downloading
+yt-dlp>=2023.10.13
+ffmpeg-python>=0.2.0
+
+# AI Transcription
+openai-whisper>=20231117
+torch>=2.0.0
+
+# Image Processing & SSIM
+opencv-python>=4.8.0
+scikit-image>=0.21.0
+Pillow>=10.0.0
+numpy>=1.24.0
+
+# UI Components
+ipywidgets>=8.0.0  # For Colab
+tk; platform_system=='Windows' or platform_system=='Darwin' or platform_system=='Linux' # Built-in, but good to note
+
+# Utilities
+fpdf>=1.7.2  # If we ever need PDF fallback, but consistent with reference
+tqdm>=4.65.0 # Progress bars
