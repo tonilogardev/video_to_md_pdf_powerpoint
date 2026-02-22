@@ -12,6 +12,8 @@ from src.frame_extractor import FrameExtractor
 from src.markdown_gen import MarkdownGenerator
 from src.packager import Packager
 from src.ui_selector import UISelector
+from src.pdf_gen import PdfGenerator
+from src.ppt_gen import PptGenerator
 
 def main():
     print("========================================")
@@ -76,6 +78,8 @@ def main():
     transcriber = Transcriber(model_size="small")
     frame_extractor = FrameExtractor(output_folder="frames")
     markdown_gen = MarkdownGenerator()
+    pdf_gen = PdfGenerator()
+    ppt_gen = PptGenerator()
 
     # 3. Processing Loop
     print("\n--- step 1: Processing Inputs ---")
@@ -113,8 +117,16 @@ def main():
             # Markdown
             md_path = markdown_gen.generate_md(video_title, transcription_result['segments'], slides)
             
+            # PDF
+            pdf_path = f"{video_title}.pdf"
+            pdf_gen.generate_pdf(md_path, pdf_path)
+            
+            # PowerPoint
+            ppt_path = f"{video_title}.pptx"
+            ppt_gen.generate_ppt(video_title, transcription_result['segments'], slides, ppt_path)
+            
             # Package
-            files_to_zip = [mp4_path, audio_path, srt_path, md_path]
+            files_to_zip = [mp4_path, audio_path, srt_path, md_path, pdf_path, ppt_path]
             zip_name = f"{video_title}_package.zip"
             Packager.create_package(zip_name, files_to_include=files_to_zip, folder_to_include="frames")
             
@@ -122,7 +134,7 @@ def main():
             
             # --- Cleanup Intermediate Files ---
             print("--- Step 7: Cleaning Up ---")
-            for f in [audio_path, srt_path, md_path]:
+            for f in [audio_path, srt_path, md_path, pdf_path, ppt_path]:
                 if os.path.exists(f):
                     os.remove(f)
                     print(f"Deleted temporary file: {f}")

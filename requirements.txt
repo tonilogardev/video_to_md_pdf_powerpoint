@@ -19,3 +19,5 @@ tk; platform_system=='Windows' or platform_system=='Darwin' or platform_system==
 # Utilities
 fpdf>=1.7.2  # If we ever need PDF fallback, but consistent with reference
 tqdm>=4.65.0 # Progress bars
+python-pptx
+markdown-pdf
