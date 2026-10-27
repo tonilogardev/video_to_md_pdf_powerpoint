@@ -31,6 +31,7 @@ MANIFEST
 #  before PyInstaller builds the exe, so as to inject date/other infos into it.
 *.manifest
 *.spec
+!build_desktop.spec
 
 # Installer logs
 pip-log.txt
@@ -207,15 +208,53 @@ marimo/_lsp/
 __marimo__/
 
 
-# Ignore test videos
+# Ignore all video formats
 *.mp4
 *.mkv
 *.avi
 *.mov
+*.webm
+*.flv
+*.wmv
+*.m4v
+*.ts
+*.3gp
+*.mpeg
+*.mpg
 
+# Ignore all extracted audio formats
+*.mp3
+*.wav
+*.m4a
+*.aac
+*.ogg
+*.flac
+*.wma
 
-# Ignore temporary output and packages
+# Ignore AI model files and checkpoints
+*.pt
+*.pth
+*.bin
+*.onnx
+
+# Ignore temporary output, workspaces and packages
 *_package.zip
+*.zip
 downloads/
 frames/
+_temp_workspace/
+output/
+outputs/
+test_output*/
+Nueva carpeta/
+
+# Third party binaries and local tools
+third_party/
+
+# Operating System files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+.DS_Store
 

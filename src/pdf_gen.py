@@ -42,10 +42,9 @@ class PdfGenerator:
              # Initialize the PDF converter
              pdf = MarkdownPdf(toc_level=2) # Generate Table of Contents based on H2
              
-             # Add the markdown content as a section
-             # Note: markdown_pdf automatically handles local image links (like frames/image.jpg) 
-             # as long as the relative path is correct from the working directory.
-             pdf.add_section(Section(md_content))
+             # Add the markdown content as a section with root directory set to md_path's folder
+             md_root = os.path.dirname(os.path.abspath(md_path))
+             pdf.add_section(Section(md_content, root=md_root))
 
              # Ensure the output directory exists
              output_dir = os.path.dirname(output_pdf_path)

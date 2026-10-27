@@ -10,10 +10,17 @@ class Transcriber:
     """
 
     def __init__(self, model_size="small"):
+        self.model_size = model_size
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
-        print(f"Loading Whisper model ({model_size}) on {self.device}...")
-        self.model = whisper.load_model(model_size, device=self.device)
-        print("Whisper model loaded.")
+        self._model = None
+
+    @property
+    def model(self):
+        if self._model is None:
+            print(f"Loading Whisper model ({self.model_size}) on {self.device}...")
+            self._model = whisper.load_model(self.model_size, device=self.device)
+            print("Whisper model loaded.")
+        return self._model
 
     def transcribe(self, audio_path: str) -> Dict[str, Any]:
         """
@@ -24,7 +31,7 @@ class Transcriber:
             raise FileNotFoundError(f"Audio file not found: {audio_path}")
 
         print(f"Transcribing {audio_path}...")
-        result = self.model.transcribe(audio_path)
+        result = self.model.transcribe(audio_path, fp16=(self.device == "cuda"))
         return result
 
     def save_srt(self, segments: List[Dict], output_path: str):

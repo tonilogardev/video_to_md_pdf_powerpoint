@@ -37,7 +37,9 @@ class MarkdownGenerator:
             # Header for the slide
             slide_time = slide['time_sec']
             timestamp_str = slide['timestamp']
-            image_rel_path = slide['path']  # Assuming path is relative or will be zipped relative
+            # In markdown and the zip package, frames are in a relative 'frames/' folder
+            frame_filename = os.path.basename(str(slide['path']))
+            image_rel_path = f"frames/{frame_filename}"
             
             # Add the Image
             md_content.append(f"## Timestamp: {timestamp_str}\n")
@@ -46,22 +48,13 @@ class MarkdownGenerator:
             # Determine end time for this section (it's the next slide's time, or end of video)
             next_slide_time = slides[i+1]['time_sec'] if (i + 1) < len(slides) else 999999.0
             
-            # Collect text segments that fall into this window [slide_time, next_slide_time)
-            # Special case: Include segments that started slightly before this slide if they weren't covered yet?
-            # Simplification: Just check start times.
-            
             section_text = []
             while current_segment_idx < total_segments:
                 seg = segments[current_segment_idx]
                 if seg['start'] < next_slide_time:
-                    # This segment belongs to the current or previous block. 
-                    # If it's already past the current slide start, it definitely belongs here.
-                    # If it started slightly before, it might have been missed by previous loop? 
-                    # No, because current_segment_idx increments.
                     section_text.append(seg['text'].strip())
                     current_segment_idx += 1
                 else:
-                    # Segment starts after the next slide, so we stop here
                     break
             
             if section_text:
@@ -72,9 +65,10 @@ class MarkdownGenerator:
             
             md_content.append("---\n")
 
-        # Catch any remaining text after last slide
+        # Catch any remaining text after last slide (or all text if no slides)
         if current_segment_idx < total_segments:
-             md_content.append("## Ending Transcript\n")
+             section_title = "## Full Transcript\n" if not slides else "## Ending Transcript\n"
+             md_content.append(section_title)
              remaining_text = [seg['text'].strip() for seg in segments[current_segment_idx:]]
              md_content.append("> " + " ".join(remaining_text) + "\n\n")
 

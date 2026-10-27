@@ -18,21 +18,39 @@ class AudioExtractor:
             output_path = f"{base}.mp3"
 
         if os.path.exists(output_path):
-             os.remove(output_path)  # Force overwrite to ensure fresh extraction
+            os.remove(output_path)  # Force overwrite to ensure fresh extraction
+
+        if not os.path.exists(video_path):
+            print(f"Video file not found: {video_path}")
+            return None
 
         print(f"Extracting audio to: {output_path}")
 
+        # Allow overriding ffmpeg executable via environment variable FFMPEG_PATH
+        ffmpeg_exe = os.environ.get('FFMPEG_PATH', 'ffmpeg')
+
         # ffmpeg command: -q:a 0 (best quality VBR), -map a (audio stream only)
         cmd = [
-            'ffmpeg', '-i', video_path,
+            ffmpeg_exe, '-i', video_path,
             '-q:a', '0', '-map', 'a',
             '-y', output_path
         ]
 
+        extra_kwargs = {}
+        if os.name == 'nt':
+            extra_kwargs['creationflags'] = getattr(subprocess, 'CREATE_NO_WINDOW', 0x08000000)
+
         try:
-            subprocess.run(cmd, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            subprocess.run(cmd, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, **extra_kwargs)
             print(f"Audio extraction successful: {output_path}")
             return output_path
+        except FileNotFoundError:
+            print(
+                f"ffmpeg executable not found: '{ffmpeg_exe}'.\n"
+                "Please install ffmpeg and ensure it's on your PATH, or set the FFMPEG_PATH environment variable to the ffmpeg executable."
+            )
+            return None
         except subprocess.CalledProcessError as e:
-            print(f"Audio extraction failed: {e.stderr.decode()}")
+            stderr = e.stderr.decode() if e.stderr else str(e)
+            print(f"Audio extraction failed: {stderr}")
             return None

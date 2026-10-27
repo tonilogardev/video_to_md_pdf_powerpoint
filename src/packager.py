@@ -34,7 +34,7 @@ class Packager:
                         file_path = os.path.join(root, file)
                         # Maintain folder structure within zip
                         # arcname = frames/frame_001.jpg
-                        arcname = os.path.join(os.path.basename(folder_to_include), file)
+                        arcname = os.path.join(os.path.basename(folder_to_include), file).replace('\\', '/')
                         zipf.write(file_path, arcname=arcname)
         
         print(f"Package created successfully! Size: {os.path.getsize(zip_name) / (1024*1024):.2f} MB")
