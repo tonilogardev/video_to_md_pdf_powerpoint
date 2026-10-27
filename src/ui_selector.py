@@ -1,6 +1,7 @@
 import os
 import tkinter as tk
 from tkinter import filedialog, simpledialog
+from src.ui_utils import set_window_icon, load_gif_frames, open_user_guide
 
 class UISelector:
     """
@@ -10,16 +11,18 @@ class UISelector:
     @staticmethod
     def show_main_menu():
         """
-        Displays a graphical main menu window with buttons to select input method.
+        Displays a graphical main menu window with animated logo,
+        clear explanation of generated output files, and input source buttons.
         Falls back to console input if GUI environment is unavailable.
         Returns: '1', '2', '3', or None if cancelled.
         """
         try:
             root = tk.Tk()
-            root.title("Video to Markdown & Presentation Converter")
-            root.geometry("460x360")
+            root.title("Video to Markdown & Presentation Suite")
+            root.geometry("560x720")
             root.resizable(False, False)
             root.attributes('-topmost', True)
+            set_window_icon(root)
 
             bg_color = "#f8fafc"
             card_color = "#ffffff"
@@ -29,7 +32,7 @@ class UISelector:
 
             # Center window on screen
             root.update_idletasks()
-            width, height = 460, 360
+            width, height = 560, 720
             x = (root.winfo_screenwidth() // 2) - (width // 2)
             y = (root.winfo_screenheight() // 2) - (height // 2)
             root.geometry(f"{width}x{height}+{x}+{y}")
@@ -40,60 +43,142 @@ class UISelector:
                 selected[0] = choice
                 root.destroy()
 
-            # Header
-            header = tk.Frame(root, bg=bg_color, pady=12)
+            # Header with animated GIF
+            header = tk.Frame(root, bg=bg_color, pady=8)
             header.pack(fill="x")
+
+            gif_frames = load_gif_frames(root, "logo.gif", size=(72, 72))
+            if gif_frames:
+                lbl_gif = tk.Label(header, image=gif_frames[0], bg=bg_color)
+                lbl_gif.pack()
+
+                def _animate(idx=0):
+                    try:
+                        if root.winfo_exists():
+                            lbl_gif.config(image=gif_frames[idx])
+                            root.after(80, _animate, (idx + 1) % len(gif_frames))
+                    except Exception:
+                        pass
+
+                root.after(80, _animate, 1)
 
             title_lbl = tk.Label(
                 header,
-                text="Video to Markdown Converter",
-                font=("Segoe UI", 15, "bold"),
+                text="Video to Markdown & Presentation Suite",
+                font=("Segoe UI", 14, "bold"),
                 fg=text_color,
                 bg=bg_color
             )
-            title_lbl.pack()
+            title_lbl.pack(pady=(4, 0))
 
             sub_lbl = tk.Label(
                 header,
-                text="Extrae audio, transcripción IA y diapositivas automáticas",
+                text="Transforma tus vídeos en material de estudio y presentaciones estructuradas",
                 font=("Segoe UI", 9),
                 fg="#64748b",
                 bg=bg_color
             )
-            sub_lbl.pack(pady=(2, 0))
+            sub_lbl.pack(pady=(1, 0))
 
-            # Card
-            card = tk.Frame(root, bg=card_color, padx=20, pady=15, highlightthickness=1, highlightbackground="#e2e8f0")
-            card.pack(fill="both", expand=True, padx=20, pady=(0, 15))
+            btn_help = tk.Button(
+                header,
+                text="📖 ¿Cómo funciona la herramienta? Guía de uso",
+                font=("Segoe UI", 9, "underline bold"),
+                fg="#2563eb",
+                bg=bg_color,
+                activeforeground="#1d4ed8",
+                activebackground=bg_color,
+                relief="flat",
+                bd=0,
+                cursor="hand2",
+                command=open_user_guide
+            )
+            btn_help.pack(pady=(4, 0))
+
+            # Info Card: Detailed explanation of output files
+            info_card = tk.Frame(root, bg=card_color, padx=16, pady=10, highlightthickness=1, highlightbackground="#e2e8f0")
+            info_card.pack(fill="x", padx=20, pady=(0, 10))
+
+            lbl_info_title = tk.Label(
+                info_card,
+                text="📦 Archivos generados a partir de los vídeos (en paquete final .ZIP):",
+                font=("Segoe UI", 9, "bold"),
+                fg="#1e293b",
+                bg=card_color
+            )
+            lbl_info_title.pack(anchor="w", pady=(0, 6))
+
+            files_info = [
+                ("📁 frames/", "Carpeta con capturas automáticas de diapositivas (SSIM)"),
+                ("📝 001.md", "Documento Markdown estructurado con capturas adjuntas"),
+                ("📄 001.pdf", "Documento PDF maquetado con imágenes y texto sincronizado"),
+                ("📊 001.pptx", "Presentación PowerPoint (captura a izq. y texto a der.)"),
+                ("🎵 001.mp3", "Pista de audio extraída del vídeo en alta fidelidad"),
+                ("💬 001.srt", "Subtítulos sincronizados temporalmente con Whisper AI"),
+                ("🎬 001.mp4", "Vídeo original normalizado y optimizado"),
+            ]
+
+            info_grid = tk.Frame(info_card, bg=card_color)
+            info_grid.pack(fill="x")
+
+            for i, (ext, desc) in enumerate(files_info):
+                row_bg = "#f8fafc" if i % 2 == 0 else "#ffffff"
+                row_f = tk.Frame(info_grid, bg=row_bg, padx=6, pady=2)
+                row_f.pack(fill="x", pady=1)
+
+                lbl_tag = tk.Label(
+                    row_f,
+                    text=ext,
+                    font=("Segoe UI", 8, "bold"),
+                    fg="#2563eb",
+                    bg=row_bg,
+                    width=12,
+                    anchor="w"
+                )
+                lbl_tag.pack(side="left")
+
+                lbl_desc = tk.Label(
+                    row_f,
+                    text=desc,
+                    font=("Segoe UI", 8),
+                    fg="#475569",
+                    bg=row_bg,
+                    anchor="w"
+                )
+                lbl_desc.pack(side="left", fill="x", expand=True)
+
+            # Action Card: Source selector buttons
+            card = tk.Frame(root, bg=card_color, padx=16, pady=12, highlightthickness=1, highlightbackground="#e2e8f0")
+            card.pack(fill="both", expand=True, padx=20, pady=(0, 14))
 
             card_title = tk.Label(
                 card,
-                text="Selecciona el origen del vídeo:",
-                font=("Segoe UI", 10, "bold"),
+                text="Selecciona el origen del vídeo a procesar:",
+                font=("Segoe UI", 9, "bold"),
                 fg=text_color,
                 bg=card_color
             )
-            card_title.pack(anchor="w", pady=(0, 10))
+            card_title.pack(anchor="w", pady=(0, 8))
 
             btn_style = {
-                "font": ("Segoe UI", 10),
+                "font": ("Segoe UI", 9, "bold"),
                 "relief": "flat",
                 "cursor": "hand2",
                 "padx": 10,
-                "pady": 8,
+                "pady": 7,
                 "anchor": "w"
             }
 
             b1 = tk.Button(
                 card,
-                text="1. URL de YouTube (Vídeo o Playlist)",
+                text="1. URL de YouTube (Vídeo individual o Lista de reproducción)",
                 bg="#eff6ff",
                 fg="#1d4ed8",
                 activebackground="#dbeafe",
                 command=lambda: choose('1'),
                 **btn_style
             )
-            b1.pack(fill="x", pady=3)
+            b1.pack(fill="x", pady=2)
 
             b2 = tk.Button(
                 card,
@@ -104,18 +189,18 @@ class UISelector:
                 command=lambda: choose('2'),
                 **btn_style
             )
-            b2.pack(fill="x", pady=3)
+            b2.pack(fill="x", pady=2)
 
             b3 = tk.Button(
                 card,
-                text="3. Seleccionar Carpeta con Vídeos",
+                text="3. Seleccionar Carpeta con Vídeos (Lotes)",
                 bg="#faf5ff",
                 fg="#7e22ce",
                 activebackground="#f3e8ff",
                 command=lambda: choose('3'),
                 **btn_style
             )
-            b3.pack(fill="x", pady=3)
+            b3.pack(fill="x", pady=2)
 
             b_cancel = tk.Button(
                 card,
@@ -127,7 +212,7 @@ class UISelector:
                 font=("Segoe UI", 9),
                 relief="flat",
                 cursor="hand2",
-                pady=6
+                pady=5
             )
             b_cancel.pack(fill="x", pady=(8, 0))
 
@@ -220,6 +305,7 @@ class UISelector:
             root.geometry("520x240")
             root.resizable(False, False)
             root.attributes('-topmost', True)
+            set_window_icon(root)
 
             bg_color = "#f8fafc"
             card_color = "#ffffff"
@@ -290,6 +376,79 @@ class UISelector:
             if entry_var.get():
                 entry.select_range(0, tk.END)
 
+            # Menú contextual con el botón derecho (Cortar, Copiar, Pegar, Seleccionar todo)
+            context_menu = tk.Menu(entry, tearoff=0, font=("Segoe UI", 9))
+
+            def _paste():
+                try:
+                    text = root.clipboard_get()
+                    try:
+                        entry.delete(tk.SEL_FIRST, tk.SEL_LAST)
+                    except tk.TclError:
+                        pass
+                    entry.insert(tk.INSERT, text)
+                except Exception:
+                    pass
+
+            def _copy():
+                try:
+                    text = entry.selection_get()
+                    root.clipboard_clear()
+                    root.clipboard_append(text)
+                except Exception:
+                    pass
+
+            def _cut():
+                try:
+                    text = entry.selection_get()
+                    root.clipboard_clear()
+                    root.clipboard_append(text)
+                    entry.delete(tk.SEL_FIRST, tk.SEL_LAST)
+                except Exception:
+                    pass
+
+            def _select_all():
+                entry.select_range(0, tk.END)
+                entry.icursor(tk.END)
+
+            context_menu.add_command(label="Cortar", command=_cut, accelerator="Ctrl+X")
+            context_menu.add_command(label="Copiar", command=_copy, accelerator="Ctrl+C")
+            context_menu.add_command(label="Pegar", command=_paste, accelerator="Ctrl+V")
+            context_menu.add_separator()
+            context_menu.add_command(label="Seleccionar todo", command=_select_all, accelerator="Ctrl+A")
+
+            def show_context_menu(event):
+                entry.focus_set()
+                # Si no hay texto seleccionado, posicionar cursor donde se hizo clic
+                try:
+                    if not entry.selection_present():
+                        entry.icursor(f"@{event.x}")
+                except Exception:
+                    pass
+
+                # Comprobar si hay contenido en el portapapeles para habilitar/deshabilitar "Pegar"
+                try:
+                    clip_content = root.clipboard_get()
+                    context_menu.entryconfig("Pegar", state="normal" if clip_content else "disabled")
+                except Exception:
+                    context_menu.entryconfig("Pegar", state="disabled")
+
+                # Comprobar si hay texto seleccionado para habilitar/deshabilitar "Cortar" y "Copiar"
+                try:
+                    has_sel = bool(entry.selection_get())
+                except Exception:
+                    has_sel = False
+
+                context_menu.entryconfig("Cortar", state="normal" if has_sel else "disabled")
+                context_menu.entryconfig("Copiar", state="normal" if has_sel else "disabled")
+
+                try:
+                    context_menu.tk_popup(event.x_root, event.y_root)
+                finally:
+                    context_menu.grab_release()
+
+            entry.bind("<Button-3>", show_context_menu)
+
             def on_confirm(event=None):
                 val = entry_var.get().strip()
                 if val:
@@ -357,6 +516,7 @@ class UISelector:
             root.geometry("480x240")
             root.resizable(False, False)
             root.attributes('-topmost', True)
+            set_window_icon(root)
 
             bg_color = "#f8fafc"
             card_color = "#ffffff"

@@ -36,6 +36,7 @@ hidden_imports = [
     'src.packager',
     'src.ui_selector',
     'src.progress_window',
+    'src.ui_utils',
 ]
 
 # Collect submodules dynamically for libraries that use dynamic loading
@@ -45,6 +46,11 @@ hidden_imports += collect_submodules('tiktoken_ext')
 hidden_imports += collect_submodules('skimage')
 
 datas = []
+
+# Bundle application documentation and images
+doc_dir = os.path.abspath('documentation')
+if os.path.exists(doc_dir):
+    datas.append((doc_dir, 'documentation'))
 
 # Bundle the local static FFmpeg binary
 ffmpeg_path = os.path.abspath('third_party/ffmpeg/ffmpeg.exe')
@@ -92,6 +98,7 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
+    icon='documentation/img/logo.ico',
 )
 
 coll = COLLECT(

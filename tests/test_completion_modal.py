@@ -7,6 +7,7 @@ def show_completion_modal(parent, title, message, output_dir, on_exit=None):
     top.title(title)
     top.geometry("480x260")
     top.resizable(False, False)
+    top.transient(parent)
     top.attributes('-topmost', True)
 
     bg_color = "#f8fafc"
@@ -110,5 +111,16 @@ def show_completion_modal(parent, title, message, output_dir, on_exit=None):
     except Exception:
         pass
 
+    def on_close():
+        try:
+            top.grab_release()
+        except Exception:
+            pass
+        top.destroy()
+        if on_exit:
+            on_exit()
+
+    top.protocol("WM_DELETE_WINDOW", on_close)
+    top.grab_set()
     top.focus_force()
     return top

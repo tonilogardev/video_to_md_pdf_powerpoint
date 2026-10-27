@@ -4,6 +4,7 @@ import time
 import threading
 import tkinter as tk
 from tkinter import ttk, messagebox
+from src.ui_utils import set_window_icon
 
 class ProgressWindow:
     """
@@ -17,6 +18,7 @@ class ProgressWindow:
         self.root.geometry("580x520")
         self.root.resizable(False, False)
         self.root.attributes('-topmost', True)
+        set_window_icon(self.root)
 
         self.cancelled = False
         self.finished = False
@@ -205,43 +207,11 @@ class ProgressWindow:
                 self.lbl_current_step.config(text="Error durante la ejecución", fg="#dc2626")
                 self.lbl_footer_status.config(text="Revisa el registro de actividad para más detalles.")
 
-            # Clear in-progress buttons (like Cancel)
+            # Clear in-progress buttons (like Cancel) from background window footer
             for child in self.btn_frame.winfo_children():
                 child.destroy()
 
-            # Show Action Buttons in the main window footer
-            if output_dir and os.path.exists(output_dir) and success:
-                btn_open = tk.Button(
-                    self.btn_frame,
-                    text="📂 Abrir Carpeta",
-                    font=("Segoe UI", 9, "bold"),
-                    bg=self.primary_blue,
-                    fg="#ffffff",
-                    activebackground="#1d4ed8",
-                    relief="flat",
-                    cursor="hand2",
-                    padx=12,
-                    pady=5,
-                    command=self._open_output_dir
-                )
-                btn_open.pack(side="left", padx=(0, 6))
-
-            btn_exit = tk.Button(
-                self.btn_frame,
-                text="Salir",
-                font=("Segoe UI", 9, "bold"),
-                bg="#0f172a" if success else "#dc2626",
-                fg="#ffffff",
-                activebackground="#334155",
-                relief="flat",
-                cursor="hand2",
-                padx=14,
-                pady=5,
-                command=self.root.destroy
-            )
-            btn_exit.pack(side="left")
-
-            # Show floating completion pop-up window
+            # Show floating completion modal window that blocks background interaction
             self._show_completion_popup(success, message, output_dir)
 
         if self.root:
@@ -249,15 +219,17 @@ class ProgressWindow:
 
     def _show_completion_popup(self, success: bool, message: str, output_dir: str = None):
         """
-        Displays a prominent floating completion modal window on top of everything.
+        Displays a prominent floating completion modal window that strictly locks
+        the progress window behind it, eliminating duplicate action buttons.
         """
         popup = tk.Toplevel(self.root)
         popup.title("¡Tarea Completada!" if success else "Aviso de Finalización")
         popup.geometry("500x260")
         popup.resizable(False, False)
+        popup.transient(self.root)
         popup.attributes('-topmost', True)
-
         popup.configure(bg=self.bg_color)
+        set_window_icon(popup)
 
         # Center on screen
         popup.update_idletasks()
@@ -305,7 +277,7 @@ class ProgressWindow:
         )
         lbl_desc.pack(fill="both", expand=True, pady=(0, 10))
 
-        # Action Buttons inside popup
+        # Action Buttons inside popup (the ONLY visible action buttons)
         btn_box = tk.Frame(card, bg=self.card_color)
         btn_box.pack(fill="x")
 
@@ -317,8 +289,23 @@ class ProgressWindow:
                     pass
 
         def _exit_app():
+            try:
+                popup.grab_release()
+            except Exception:
+                pass
             popup.destroy()
             self.root.destroy()
+
+        def _on_modal_close():
+            try:
+                popup.grab_release()
+            except Exception:
+                pass
+            popup.destroy()
+            # If user closes modal with 'X' to inspect logs, unblock background window and show close button
+            self._setup_unblocked_footer(success, output_dir)
+
+        popup.protocol("WM_DELETE_WINDOW", _on_modal_close)
 
         if output_dir and os.path.exists(output_dir) and success:
             btn_open = tk.Button(
@@ -351,7 +338,49 @@ class ProgressWindow:
         )
         btn_exit.pack(side="right", expand=True, fill="x")
 
+        # Strictly lock focus to modal dialog
+        popup.grab_set()
         popup.focus_force()
+
+    def _setup_unblocked_footer(self, success: bool, output_dir: str = None):
+        """
+        Populates a clean button on the background window only if the user explicitly
+        dismissed the modal dialog to inspect the log.
+        """
+        for child in self.btn_frame.winfo_children():
+            child.destroy()
+
+        if output_dir and os.path.exists(output_dir) and success:
+            btn_open = tk.Button(
+                self.btn_frame,
+                text="📂 Abrir Carpeta",
+                font=("Segoe UI", 9, "bold"),
+                bg=self.primary_blue,
+                fg="#ffffff",
+                activebackground="#1d4ed8",
+                relief="flat",
+                cursor="hand2",
+                padx=12,
+                pady=5,
+                command=self._open_output_dir
+            )
+            btn_open.pack(side="left", padx=(0, 6))
+
+        btn_exit = tk.Button(
+            self.btn_frame,
+            text="Cerrar Aplicación",
+            font=("Segoe UI", 9, "bold"),
+            bg="#0f172a" if success else "#dc2626",
+            fg="#ffffff",
+            activebackground="#334155",
+            relief="flat",
+            cursor="hand2",
+            padx=14,
+            pady=5,
+            command=self.root.destroy
+        )
+        btn_exit.pack(side="left")
+        self.lbl_footer_status.config(text="Puedes revisar el registro de actividad o cerrar.")
 
     def _open_output_dir(self):
         if self.output_dir and os.path.exists(self.output_dir):

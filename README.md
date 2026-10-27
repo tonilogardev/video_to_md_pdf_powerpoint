@@ -56,6 +56,8 @@ This bundles PyTorch, Whisper AI, FFmpeg, and the modern UI into `dist/VideoToMa
 ## 📚 Documentation
 
 For in-depth architectural and development documentation, see the `documentation/` folder:
-- [01_overview.md](./documentation/01_overview.md) - System overview, requirements, and execution guide.
-- [02_architecture.md](./documentation/02_architecture.md) - Pipeline data flow and core module breakdown.
+- [000_run_app.md](./documentation/000_run_app.md) - Quick start and installation scripts.
+- [001_overview.md](./documentation/001_overview.md) - System overview, requirements, and execution guide.
+- [002_architecture.md](./documentation/002_architecture.md) - Pipeline data flow and core module breakdown.
 - [03_build_and_distribution.md](./documentation/03_build_and_distribution.md) - Standalone compilation and distribution guide.
+- [004_user_guide.md](./documentation/004_user_guide.md) - **Complete User Guide for all 3 input methods**.
