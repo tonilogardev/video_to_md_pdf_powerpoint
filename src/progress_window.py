@@ -168,26 +168,42 @@ class ProgressWindow:
     def log(self, message: str):
         """Thread-safe logging to the text area."""
         def _append():
-            self.txt_log.configure(state="normal")
-            timestamp = time.strftime("%H:%M:%S")
-            self.txt_log.insert("end", f"[{timestamp}] {message}\n")
-            self.txt_log.see("end")
-            self.txt_log.configure(state="disabled")
+            try:
+                if not self.root or not self.root.winfo_exists():
+                    return
+                self.txt_log.configure(state="normal")
+                timestamp = time.strftime("%H:%M:%S")
+                self.txt_log.insert("end", f"[{timestamp}] {message}\n")
+                self.txt_log.see("end")
+                self.txt_log.configure(state="disabled")
+            except Exception:
+                pass
 
         if self.root:
-            self.root.after(0, _append)
+            try:
+                self.root.after(0, _append)
+            except Exception:
+                pass
 
     def set_progress(self, percent: float, step_text: str = None, subtitle: str = None):
         """Thread-safe progress update."""
         def _update():
-            self.progress_bar["value"] = percent
-            if step_text:
-                self.lbl_current_step.config(text=f"Estado: {step_text}")
-            if subtitle:
-                self.lbl_subtitle.config(text=subtitle)
+            try:
+                if not self.root or not self.root.winfo_exists():
+                    return
+                self.progress_bar["value"] = percent
+                if step_text:
+                    self.lbl_current_step.config(text=f"Estado: {step_text}")
+                if subtitle:
+                    self.lbl_subtitle.config(text=subtitle)
+            except Exception:
+                pass
 
         if self.root:
-            self.root.after(0, _update)
+            try:
+                self.root.after(0, _update)
+            except Exception:
+                pass
 
     def set_finished(self, success: bool, message: str, output_dir: str = None):
         """Thread-safe completion handler."""
@@ -195,27 +211,35 @@ class ProgressWindow:
         self.output_dir = output_dir
 
         def _finish():
-            if success:
-                self.progress_bar["value"] = 100
-                self.lbl_title.config(text="¡Conversión Completada con Éxito!", fg=self.success_green)
-                self.lbl_subtitle.config(text=message, fg=self.success_green)
-                self.lbl_current_step.config(text="Proceso finalizado al 100%", fg=self.success_green)
-                self.lbl_footer_status.config(text="Todos los archivos han sido generados y empaquetados.")
-            else:
-                self.lbl_title.config(text="Ocurrió un error en el proceso", fg="#dc2626")
-                self.lbl_subtitle.config(text=message, fg="#dc2626")
-                self.lbl_current_step.config(text="Error durante la ejecución", fg="#dc2626")
-                self.lbl_footer_status.config(text="Revisa el registro de actividad para más detalles.")
+            try:
+                if not self.root or not self.root.winfo_exists():
+                    return
+                if success:
+                    self.progress_bar["value"] = 100
+                    self.lbl_title.config(text="¡Conversión Completada con Éxito!", fg=self.success_green)
+                    self.lbl_subtitle.config(text=message, fg=self.success_green)
+                    self.lbl_current_step.config(text="Proceso finalizado al 100%", fg=self.success_green)
+                    self.lbl_footer_status.config(text="Todos los archivos han sido generados y empaquetados.")
+                else:
+                    self.lbl_title.config(text="Ocurrió un error en el proceso", fg="#dc2626")
+                    self.lbl_subtitle.config(text=message, fg="#dc2626")
+                    self.lbl_current_step.config(text="Error durante la ejecución", fg="#dc2626")
+                    self.lbl_footer_status.config(text="Revisa el registro de actividad para más detalles.")
 
-            # Clear in-progress buttons (like Cancel) from background window footer
-            for child in self.btn_frame.winfo_children():
-                child.destroy()
+                # Clear in-progress buttons (like Cancel) from background window footer
+                for child in self.btn_frame.winfo_children():
+                    child.destroy()
 
-            # Show floating completion modal window that blocks background interaction
-            self._show_completion_popup(success, message, output_dir)
+                # Show floating completion modal window that blocks background interaction
+                self._show_completion_popup(success, message, output_dir)
+            except Exception:
+                pass
 
         if self.root:
-            self.root.after(0, _finish)
+            try:
+                self.root.after(0, _finish)
+            except Exception:
+                pass
 
     def _show_completion_popup(self, success: bool, message: str, output_dir: str = None):
         """

@@ -179,13 +179,17 @@ def main():
                 pw.set_progress(base_pct, f"Preparando vídeo {i+1} de {total_vids}...", f"[{i+1}/{total_vids}] {video_name}")
 
                 try:
+                    import re
                     # Convert
                     mp4_path = VideoConverter.ensure_mp4(video_path)
                     video_title = os.path.splitext(os.path.basename(mp4_path))[0]
+                    safe_title = re.sub(r'[\\/*?:"<>|]', '_', video_title).strip()
+                    if not safe_title:
+                        safe_title = f"video_{i+1:03d}"
                     
                     # Audio
                     pw.set_progress(base_pct + int(step_range * 0.15), "Extrayendo audio MP3...", f"[{i+1}/{total_vids}] {video_title}")
-                    audio_path = AudioExtractor.extract_audio(mp4_path, output_path=os.path.join(work_dir, f"{video_title}.mp3"))
+                    audio_path = AudioExtractor.extract_audio(mp4_path, output_path=os.path.join(work_dir, f"{safe_title}.mp3"))
                     if not audio_path:
                         raise RuntimeError(f"No se pudo extraer el audio del vídeo: {video_path}")
                     pw.log("Pista de audio extraída con éxito.")
@@ -199,7 +203,7 @@ def main():
                     num_segments = len(transcription_result.get('segments', []))
                     pw.log(f"Transcripción finalizada: {num_segments} segmentos detectados.")
 
-                    srt_path = os.path.join(work_dir, f"{video_title}.srt")
+                    srt_path = os.path.join(work_dir, f"{safe_title}.srt")
                     transcriber.save_srt(transcription_result['segments'], srt_path)
                     
                     if pw.cancelled: break
@@ -214,11 +218,11 @@ def main():
 
                     # Markdown & PDF
                     pw.set_progress(base_pct + int(step_range * 0.75), "Generando Markdown y PDF...", f"[{i+1}/{total_vids}] {video_title}")
-                    md_path = os.path.join(work_dir, f"{video_title}.md")
+                    md_path = os.path.join(work_dir, f"{safe_title}.md")
                     markdown_gen.generate_md(video_title, transcription_result['segments'], slides, output_path=md_path)
                     pw.log("Documento Markdown generado con marcas de tiempo.")
                     
-                    pdf_path = os.path.join(work_dir, f"{video_title}.pdf")
+                    pdf_path = os.path.join(work_dir, f"{safe_title}.pdf")
                     pdf_gen.generate_pdf(md_path, pdf_path)
                     pw.log("Documento PDF exportado con éxito.")
                     
@@ -226,14 +230,14 @@ def main():
 
                     # PowerPoint
                     pw.set_progress(base_pct + int(step_range * 0.85), "Creando presentación PowerPoint...", f"[{i+1}/{total_vids}] {video_title}")
-                    ppt_path = os.path.join(work_dir, f"{video_title}.pptx")
+                    ppt_path = os.path.join(work_dir, f"{safe_title}.pptx")
                     ppt_gen.generate_ppt(video_title, transcription_result['segments'], slides, ppt_path)
                     pw.log("Presentación PowerPoint (.pptx) generada con éxito.")
                     
                     # Package into user-selected output_dir
                     pw.set_progress(base_pct + int(step_range * 0.95), "Empaquetando archivo ZIP final...", f"[{i+1}/{total_vids}] {video_title}")
                     files_to_zip = [mp4_path, audio_path, srt_path, md_path, pdf_path, ppt_path]
-                    zip_name = os.path.join(output_dir, f"{video_title}_package.zip")
+                    zip_name = os.path.join(output_dir, f"{safe_title}_package.zip")
                     Packager.create_package(zip_name, files_to_include=files_to_zip, folder_to_include=frames_dir)
                     
                     pw.log(f"¡PAQUETE ZIP GENERADO!: {os.path.basename(zip_name)}")
@@ -242,10 +246,16 @@ def main():
                     # Clean up intermediate video-specific files
                     for f in [audio_path, srt_path, md_path, pdf_path, ppt_path]:
                         if os.path.exists(f):
-                            os.remove(f)
+                            try:
+                                os.remove(f)
+                            except Exception:
+                                pass
                     import shutil
                     if os.path.exists(frames_dir):
-                        shutil.rmtree(frames_dir, ignore_errors=True)
+                        try:
+                            shutil.rmtree(frames_dir, ignore_errors=True)
+                        except Exception:
+                            pass
 
                 except Exception as e:
                     pw.log(f"ERROR al procesar {video_name}: {e}")
@@ -255,7 +265,10 @@ def main():
             import gc, shutil
             gc.collect()
             if os.path.exists(work_dir):
-                shutil.rmtree(work_dir, ignore_errors=True)
+                try:
+                    shutil.rmtree(work_dir, ignore_errors=True)
+                except Exception:
+                    pass
 
             if pw.cancelled:
                 pw.log("El proceso fue detenido por el usuario.")
@@ -278,4 +291,28 @@ def main():
     pw.start_worker(worker)
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except Exception as e:
+        import traceback
+        import datetime
+        crash_msg = traceback.format_exc()
+        try:
+            log_dir = os.path.dirname(os.path.abspath(__file__))
+            crash_file = os.path.join(log_dir, "crash.log")
+            with open(crash_file, "a", encoding="utf-8") as f:
+                f.write(f"\n=== CRASH AT {datetime.datetime.now().isoformat()} ===\n")
+                f.write(crash_msg)
+        except Exception:
+            pass
+
+        try:
+            import tkinter as tk
+            from tkinter import messagebox
+            root = tk.Tk()
+            root.withdraw()
+            root.wm_attributes('-topmost', 1)
+            messagebox.showerror("Error Inesperado", f"Ocurrió un error inesperado al ejecutar la aplicación:\n\n{e}\n\nConsulta crash.log para más información.")
+            root.destroy()
+        except Exception:
+            print(f"FATAL ERROR: {crash_msg}")

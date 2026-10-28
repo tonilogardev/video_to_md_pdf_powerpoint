@@ -137,9 +137,4 @@ class InputHandler:
 
         if last_error:
             print(f"Failed to download {url} after trying all strategies: {last_error}")
-            try:
-                from src.ui_selector import UISelector
-                UISelector.show_error("Error de descarga", f"No se pudo descargar el vídeo de YouTube:\n{url}\n\nDetalle:\n{last_error}")
-            except Exception:
-                pass
         return []

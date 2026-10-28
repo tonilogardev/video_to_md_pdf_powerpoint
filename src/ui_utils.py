@@ -12,6 +12,7 @@ def get_asset_path(filename: str) -> str:
         if hasattr(sys, '_MEIPASS'):
             possible_roots.append(sys._MEIPASS)
         possible_roots.append(os.path.dirname(sys.executable))
+        possible_roots.append(os.path.join(os.path.dirname(sys.executable), '_internal'))
     
     current_dir = os.path.dirname(os.path.abspath(__file__))
     possible_roots.append(os.path.abspath(os.path.join(current_dir, '..')))

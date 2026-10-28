@@ -1,6 +1,7 @@
 import cv2
 import os
 import shutil
+import time
 from skimage.metrics import structural_similarity as ssim
 from typing import List, Dict, Any
 
@@ -36,8 +37,17 @@ class FrameExtractor:
         Returns a list of dicts: {'path': '...', 'time_sec': 12.5, 'timestamp': '00:12'}
         """
         if os.path.exists(self.output_folder):
-            shutil.rmtree(self.output_folder)
-        os.makedirs(self.output_folder)
+            try:
+                shutil.rmtree(self.output_folder, ignore_errors=True)
+            except Exception:
+                pass
+
+        for _ in range(5):
+            try:
+                os.makedirs(self.output_folder, exist_ok=True)
+                break
+            except (FileExistsError, PermissionError):
+                time.sleep(0.1)
 
         cap = cv2.VideoCapture(video_path)
         if not cap.isOpened():
