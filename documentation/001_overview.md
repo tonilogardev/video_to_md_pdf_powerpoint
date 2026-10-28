@@ -68,5 +68,6 @@
 
 ## 5 Next steps
 
-- [02_architecture.md](./02_architecture.md)
-- [03_build_and_distribution.md](./03_build_and_distribution.md)
+- [002_architecture.md](./002_architecture.md)
+- [003_build_and_distribution.md](./003_build_and_distribution.md)
+- [004_user_guide.md](./004_user_guide.md)

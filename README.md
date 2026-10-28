@@ -53,11 +53,23 @@ This bundles PyTorch, Whisper AI, FFmpeg, and the modern UI into `dist/VideoToMa
 
 ---
 
+## 📦 Sharing with End Users & Friends
+
+To distribute the application to testers or friends without requiring Python installed:
+1. Locate the compiled output directory: `dist/VideoToMarkdownConverter/`
+2. Compress the entire `VideoToMarkdownConverter` folder into a `.zip` archive.
+3. Share the `.zip` file.
+4. Recipients extract the folder and double-click `VideoToMarkdownConverter.exe`.
+*(Note: Never separate `VideoToMarkdownConverter.exe` from its adjacent `_internal/` dependency folder).*
+
+---
+
 ## 📚 Documentation
 
-For in-depth architectural and development documentation, see the `documentation/` folder:
+For in-depth architectural and development documentation, see the [documentation/](./documentation/) directory:
 - [000_run_app.md](./documentation/000_run_app.md) - Quick start and installation scripts.
 - [001_overview.md](./documentation/001_overview.md) - System overview, requirements, and execution guide.
 - [002_architecture.md](./documentation/002_architecture.md) - Pipeline data flow and core module breakdown.
-- [03_build_and_distribution.md](./documentation/03_build_and_distribution.md) - Standalone compilation and distribution guide.
-- [004_user_guide.md](./documentation/004_user_guide.md) - **Complete User Guide for all 3 input methods**.
+- [003_build_and_distribution.md](./documentation/003_build_and_distribution.md) - Standalone compilation and distribution guide.
+- [004_user_guide.md](./documentation/004_user_guide.md) - 🇪🇸 **Guía de usuario completa**.
+- [004_user_guide_en.md](./documentation/004_user_guide_en.md) - 🇬🇧 **Complete End-User Guide**.

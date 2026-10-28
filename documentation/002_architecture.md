@@ -51,5 +51,6 @@
 
 ## 3 Next steps
 
-- [01_overview.md](./01_overview.md)
-- [03_build_and_distribution.md](./03_build_and_distribution.md)
+- [001_overview.md](./001_overview.md)
+- [003_build_and_distribution.md](./003_build_and_distribution.md)
+- [004_user_guide.md](./004_user_guide.md)

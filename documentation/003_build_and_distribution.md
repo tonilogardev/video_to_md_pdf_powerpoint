@@ -48,5 +48,6 @@
 
 ## 4 Next steps
 
-- [01_overview.md](./01_overview.md)
-- [02_architecture.md](./02_architecture.md)
+- [001_overview.md](./001_overview.md)
+- [002_architecture.md](./002_architecture.md)
+- [004_user_guide.md](./004_user_guide.md)

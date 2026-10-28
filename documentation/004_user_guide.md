@@ -1,5 +1,7 @@
 # Guía de Uso: Video to Markdown & Presentation Suite
 
+> **Idioma / Language:** [ 🇪🇸 Español ](./004_user_guide.md) | [ 🇬🇧 English ](./004_user_guide_en.md)
+
 ## Index
 
 1. [Inicio de la aplicación](#1-inicio-de-la-aplicacion)
@@ -15,8 +17,9 @@
 ## 1 Inicio de la aplicación
 
 - ***Instruction***: Ejecuta la suite de escritorio desde el ejecutable compilado o mediante Python.
-    - Ejecutable: Abre `dist/VideoToMarkdownConverter/VideoToMarkdownConverter.exe`.
+    - Ejecutable: Abre [dist/VideoToMarkdownConverter/VideoToMarkdownConverter.exe](../dist/VideoToMarkdownConverter/VideoToMarkdownConverter.exe).
     - Script: Ejecuta `python main.py` desde la raíz del proyecto.
+- ***Ayuda integrada***: Pulsa el botón inferior **📖 Guía de uso** en la ventana principal para abrir esta documentación en cualquier momento.
 - ***Visuals***:
     ![Menú Principal](./img/main_menu.png)
 - ***File References***:
@@ -119,8 +122,7 @@
 
 ## 7 Siguientes pasos
 
-- Consultar la arquitectura del sistema: [002_architecture.md](./002_architecture.md)
-- Compilación y distribución del ejecutable Windows: [03_build_and_distribution.md](./03_build_and_distribution.md)
-- Portal principal del repositorio: [README.md](../README.md)
-
-[←Index](#index)
+- [001_overview.md](./001_overview.md)
+- [002_architecture.md](./002_architecture.md)
+- [003_build_and_distribution.md](./003_build_and_distribution.md)
+- [README.md](../README.md)
