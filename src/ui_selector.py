@@ -38,10 +38,32 @@ class UISelector:
             root.geometry(f"{width}x{height}+{x}+{y}")
 
             selected = [None]
+            anim_job = [None]
+
+            def _clean_and_destroy(val=None):
+                selected[0] = val
+                if anim_job[0]:
+                    try:
+                        root.after_cancel(anim_job[0])
+                    except Exception:
+                        pass
+                    anim_job[0] = None
+                try:
+                    if 'lbl_gif' in locals() and lbl_gif.winfo_exists():
+                        lbl_gif.config(image="")
+                except Exception:
+                    pass
+                if 'gif_frames' in locals() and gif_frames:
+                    gif_frames.clear()
+                try:
+                    root.destroy()
+                except Exception:
+                    pass
 
             def choose(choice):
-                selected[0] = choice
-                root.destroy()
+                _clean_and_destroy(choice)
+
+            root.protocol("WM_DELETE_WINDOW", lambda: _clean_and_destroy(None))
 
             # Header with animated GIF
             header = tk.Frame(root, bg=bg_color, pady=8)
@@ -54,13 +76,13 @@ class UISelector:
 
                 def _animate(idx=0):
                     try:
-                        if root.winfo_exists():
+                        if root.winfo_exists() and lbl_gif.winfo_exists() and gif_frames:
                             lbl_gif.config(image=gif_frames[idx])
-                            root.after(80, _animate, (idx + 1) % len(gif_frames))
+                            anim_job[0] = root.after(80, _animate, (idx + 1) % len(gif_frames))
                     except Exception:
                         pass
 
-                root.after(80, _animate, 1)
+                anim_job[0] = root.after(80, _animate, 1)
 
             title_lbl = tk.Label(
                 header,
@@ -208,7 +230,7 @@ class UISelector:
                 bg="#f1f5f9",
                 fg="#475569",
                 activebackground="#e2e8f0",
-                command=root.destroy,
+                command=lambda: _clean_and_destroy(None),
                 font=("Segoe UI", 9),
                 relief="flat",
                 cursor="hand2",
@@ -217,6 +239,8 @@ class UISelector:
             b_cancel.pack(fill="x", pady=(8, 0))
 
             root.mainloop()
+            import gc
+            gc.collect()
             return selected[0]
 
         except Exception:

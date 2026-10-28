@@ -98,7 +98,12 @@ def ensure_ffmpeg(dest_folder: str = None) -> str | None:
     for folder in candidates:
         local_ffmpeg = folder / exe_name
         if local_ffmpeg.is_file():
-            return str(local_ffmpeg.resolve())
+            resolved = str(local_ffmpeg.resolve())
+            os.environ['FFMPEG_PATH'] = resolved
+            folder_str = str(folder.resolve())
+            if folder_str not in os.environ.get('PATH', ''):
+                os.environ['PATH'] = folder_str + os.pathsep + os.environ.get('PATH', '')
+            return resolved
 
     third_party = candidates[0] if candidates else (Path(__file__).resolve().parent.parent / 'third_party' / 'ffmpeg')
 
@@ -106,6 +111,10 @@ def ensure_ffmpeg(dest_folder: str = None) -> str | None:
     if system == 'Windows':
         exe_path = download_ffmpeg_windows(str(third_party))
         if exe_path:
+            os.environ['FFMPEG_PATH'] = exe_path
+            p_dir = os.path.dirname(exe_path)
+            if p_dir not in os.environ.get('PATH', ''):
+                os.environ['PATH'] = p_dir + os.pathsep + os.environ.get('PATH', '')
             return exe_path
         else:
             print('Automatic download failed. Please install ffmpeg manually.')

@@ -1,5 +1,21 @@
 import os
 import sys
+import threading
+
+# Prevent Tkinter Image deallocator crash when GC runs in secondary worker threads
+try:
+    import tkinter as tk
+    _orig_image_del = getattr(tk.Image, '__del__', None)
+    if _orig_image_del:
+        def _safe_image_del(self):
+            try:
+                if threading.current_thread() is threading.main_thread():
+                    _orig_image_del(self)
+            except Exception:
+                pass
+        tk.Image.__del__ = _safe_image_del
+except Exception:
+    pass
 
 # Ensure UTF-8 output and suppress flashing MS-DOS/CMD console windows on Windows
 if sys.platform == 'win32':
@@ -129,6 +145,10 @@ def main():
     work_dir = os.path.join(output_dir, "_temp_workspace")
     os.makedirs(work_dir, exist_ok=True)
     frames_dir = os.path.join(work_dir, "frames")
+
+    # Clear any stale UI objects on main thread before worker thread launches
+    import gc
+    gc.collect()
 
     pw = ProgressWindow("Video to Markdown Converter - Procesando")
 

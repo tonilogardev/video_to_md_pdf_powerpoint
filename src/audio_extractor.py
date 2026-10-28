@@ -26,8 +26,15 @@ class AudioExtractor:
 
         print(f"Extracting audio to: {output_path}")
 
-        # Allow overriding ffmpeg executable via environment variable FFMPEG_PATH
-        ffmpeg_exe = os.environ.get('FFMPEG_PATH', 'ffmpeg')
+        # Allow overriding ffmpeg executable via environment variable FFMPEG_PATH or ensure_ffmpeg
+        ffmpeg_exe = os.environ.get('FFMPEG_PATH')
+        if not ffmpeg_exe or not (os.path.isabs(ffmpeg_exe) and os.path.exists(ffmpeg_exe)):
+            import shutil
+            if not shutil.which('ffmpeg'):
+                from src.ffmpeg_installer import ensure_ffmpeg
+                ffmpeg_exe = ensure_ffmpeg() or 'ffmpeg'
+            else:
+                ffmpeg_exe = 'ffmpeg'
 
         # ffmpeg command: -q:a 0 (best quality VBR), -map a (audio stream only)
         cmd = [
