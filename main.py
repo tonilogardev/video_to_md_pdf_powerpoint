@@ -98,6 +98,10 @@ def main():
             print("No URL entered. Exiting.")
             return
 
+        if not any(k in url.lower() for k in ('youtube.com', 'youtu.be', 'http://', 'https://')):
+            UISelector.show_warning("Enlace no válido", f"El texto introducido no es un enlace de YouTube válido:\n\n{url}")
+            return
+
         if "list=" in url:
             if UISelector.ask_yes_no("Playlist Detectada", "¿Deseas procesar la lista de reproducción completa?"):
                 process_playlist = True

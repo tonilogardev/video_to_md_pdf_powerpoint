@@ -475,9 +475,17 @@ class UISelector:
 
             def on_confirm(event=None):
                 val = entry_var.get().strip()
-                if val:
-                    result[0] = val
-                    root.destroy()
+                if not val:
+                    return
+                # Verify that it looks like a YouTube link
+                if not any(k in val.lower() for k in ('youtube.com', 'youtu.be', 'http://', 'https://')):
+                    lbl_sub.config(
+                        text="⚠️ Por favor, introduce un enlace válido de YouTube (ej: https://www.youtube.com/watch?v=...)",
+                        fg="#dc2626"
+                    )
+                    return
+                result[0] = val
+                root.destroy()
 
             def on_cancel(event=None):
                 result[0] = None
