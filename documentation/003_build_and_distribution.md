@@ -40,6 +40,7 @@
 
 - ***Instruction***: Package and distribute the compiled application to client machines without requiring Python.
 - ***Distribution Methods***:
+    - **Google Drive Mirror**: Direct download of the compiled standalone package: [VideoToMarkdownConverter.zip (Google Drive)](https://drive.google.com/file/d/1Ew-Ze7ROpfmg446ICNA-w3qNrrm7FfBY/view?usp=sharing).
     - **Portable ZIP**: Compress the parent folder [dist/VideoToMarkdownConverter/](../dist/VideoToMarkdownConverter/) into `VideoToMarkdownConverter_v1.0.zip`. The user extracts it and runs the executable directly.
     - **Desktop Shortcut**: Instruct users to right-click `VideoToMarkdownConverter.exe` -> **Send to -> Desktop (create shortcut)**.
     - **Setup Wizard**: Optionally package the folder using Inno Setup or NSIS to generate a single `Installer.exe` that registers shortcuts and file associations.

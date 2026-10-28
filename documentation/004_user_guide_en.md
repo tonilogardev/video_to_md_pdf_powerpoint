@@ -17,8 +17,9 @@
 ## 1 Starting the Application
 
 - ***Instruction***: Launch the desktop suite from the compiled executable or via Python.
-    - Executable: Run [dist/VideoToMarkdownConverter/VideoToMarkdownConverter.exe](../dist/VideoToMarkdownConverter/VideoToMarkdownConverter.exe).
-    - Script: Run `python main.py` from the project root.
+    - Direct Download: [VideoToMarkdownConverter.zip (Google Drive)](https://drive.google.com/file/d/1Ew-Ze7ROpfmg446ICNA-w3qNrrm7FfBY/view?usp=sharing) (extract and run `VideoToMarkdownConverter.exe`).
+    - Local Executable: Run [dist/VideoToMarkdownConverter/VideoToMarkdownConverter.exe](../dist/VideoToMarkdownConverter/VideoToMarkdownConverter.exe).
+    - Python Script: Run `python main.py` from the project root.
 - ***Built-in Help***: Click the bottom **📖 Guía de uso** button in the main menu window to open this guide at any time.
 - ***Visuals***:
     ![Main Menu](./img/main_menu.png)

@@ -17,8 +17,9 @@
 ## 1 Inicio de la aplicación
 
 - ***Instruction***: Ejecuta la suite de escritorio desde el ejecutable compilado o mediante Python.
-    - Ejecutable: Abre [dist/VideoToMarkdownConverter/VideoToMarkdownConverter.exe](../dist/VideoToMarkdownConverter/VideoToMarkdownConverter.exe).
-    - Script: Ejecuta `python main.py` desde la raíz del proyecto.
+    - Descarga directa: [VideoToMarkdownConverter.zip (Google Drive)](https://drive.google.com/file/d/1Ew-Ze7ROpfmg446ICNA-w3qNrrm7FfBY/view?usp=sharing) (descomprimir y ejecutar `VideoToMarkdownConverter.exe`).
+    - Ejecutable local: Abre [dist/VideoToMarkdownConverter/VideoToMarkdownConverter.exe](../dist/VideoToMarkdownConverter/VideoToMarkdownConverter.exe).
+    - Script Python: Ejecuta `python main.py` desde la raíz del proyecto.
 - ***Ayuda integrada***: Pulsa el botón inferior **📖 Guía de uso** en la ventana principal para abrir esta documentación en cualquier momento.
 - ***Visuals***:
     ![Menú Principal](./img/main_menu.png)

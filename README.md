@@ -2,6 +2,8 @@
 
 A professional, standalone desktop application that converts video content (YouTube videos/playlists or local video files) into structured Markdown (`.md`) study notes, styled PDF documents (`.pdf`), and editable PowerPoint presentations (`.pptx`). It extracts audio, transcribes it with Whisper AI, and captures key visual slides.
 
+[![Descargar para Windows (Google Drive)](https://img.shields.io/badge/Descargar%20para%20Windows-Google%20Drive-4285F4?style=for-the-badge&logo=googledrive&logoColor=white)](https://drive.google.com/file/d/1Ew-Ze7ROpfmg446ICNA-w3qNrrm7FfBY/view?usp=sharing)
+
 ---
 
 ## ✨ Features
@@ -26,10 +28,10 @@ A professional, standalone desktop application that converts video content (YouT
 ## 🚀 Running the Application
 
 ### Option A: Standalone Windows Executable (No Python Required)
-Navigate to `dist/VideoToMarkdownConverter/` and double-click:
-```
-dist/VideoToMarkdownConverter/VideoToMarkdownConverter.exe
-```
+1. **Download**: Download the standalone portable archive:
+   👉 **[VideoToMarkdownConverter.zip (Google Drive)](https://drive.google.com/file/d/1Ew-Ze7ROpfmg446ICNA-w3qNrrm7FfBY/view?usp=sharing)**
+2. **Extract**: Unzip the folder anywhere on your PC.
+3. **Run**: Double-click `VideoToMarkdownConverter.exe` (or `dist/VideoToMarkdownConverter/VideoToMarkdownConverter.exe` if building from source).
 
 ### Option B: From Python Source
 1. Install dependencies:
@@ -56,11 +58,13 @@ This bundles PyTorch, Whisper AI, FFmpeg, and the modern UI into `dist/VideoToMa
 ## 📦 Sharing with End Users & Friends
 
 To distribute the application to testers or friends without requiring Python installed:
-1. Locate the compiled output directory: `dist/VideoToMarkdownConverter/`
-2. Compress the entire `VideoToMarkdownConverter` folder into a `.zip` archive.
-3. Share the `.zip` file.
-4. Recipients extract the folder and double-click `VideoToMarkdownConverter.exe`.
-*(Note: Never separate `VideoToMarkdownConverter.exe` from its adjacent `_internal/` dependency folder).*
+- **Share the direct Google Drive link**:
+  👉 **[VideoToMarkdownConverter.zip (Google Drive)](https://drive.google.com/file/d/1Ew-Ze7ROpfmg446ICNA-w3qNrrm7FfBY/view?usp=sharing)**
+- **Or share your own custom build**:
+  1. Locate the compiled output directory: `dist/VideoToMarkdownConverter/`
+  2. Compress the entire `VideoToMarkdownConverter` folder into a `.zip` archive.
+  3. Recipients extract the folder and double-click `VideoToMarkdownConverter.exe`.
+  *(Note: Never separate `VideoToMarkdownConverter.exe` from its adjacent `_internal/` dependency folder).*
 
 ---
 
