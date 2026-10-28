@@ -104,7 +104,7 @@ class UISelector:
 
             btn_help = tk.Button(
                 header,
-                text="📖 ¿Cómo funciona la herramienta? Guía de uso",
+                text="📖 Guía de uso",
                 font=("Segoe UI", 9, "underline bold"),
                 fg="#2563eb",
                 bg=bg_color,
